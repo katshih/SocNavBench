@@ -20,7 +20,7 @@ from utils.socnav_utils import construct_environment
 random.seed(get_seed())
 
 
-def create_params() -> DotMap:
+def create_params(runall: bool) -> DotMap:
     p: DotMap = create_socnav_params()
 
     # The camera is assumed to be mounted on a robot at fixed height
@@ -38,7 +38,7 @@ def create_params() -> DotMap:
     # Introduce the episode params
     from params.central_params import create_episodes_params
 
-    p.episode_params = create_episodes_params()
+    p.episode_params = create_episodes_params(runall)
 
     # Tilt the camera 10 degree down from the horizontal axis
     p.robot_params.physical_params.camera_elevation_degree = -10
@@ -52,12 +52,12 @@ def create_params() -> DotMap:
     return p
 
 
-def test_episodes() -> None:
+def test_episodes(render: bool,runall: bool) -> None:
     """
     Code for loading a random human into the environment
     and rendering topview, rgb, and depth images.
     """
-    p: DotMap = create_params()  # used to instantiate the camera and its parameters
+    p: DotMap = create_params(runall)  # used to instantiate the camera and its parameters
 
     RobotAgent.establish_joystick_handshake(p)
 
@@ -100,7 +100,8 @@ def test_episodes() -> None:
 
         # run simulation & render
         simulator.simulate()
-        #simulator.render(r, filename=episode.name + "_obs")
+        if render: 
+            simulator.render(r, filename=episode.name + "_obs")
 
     if not p.episode_params.without_robot:
         RobotAgent.close_robot_sockets()
@@ -108,4 +109,13 @@ def test_episodes() -> None:
 
 if __name__ == "__main__":
     # run basic room test with variable # of human
-    test_episodes()
+    import argparse
+    parser = argparse.ArgumentParser(
+                    prog = 'SocNavBench',
+                    epilog = 'Text at the bottom of help')
+    parser.add_argument('--render', action='store_true')
+    parser.add_argument('--all', action='store_true')
+
+    args = parser.parse_args()
+    # run basic room test with variable # of human
+    test_episodes(args.render,args.all)
