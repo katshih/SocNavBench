@@ -282,6 +282,7 @@ class Simulator(SimulatorHelper):
 
         # other ROBOT INFO
 
+        metrics_out["total_collisions"] = len(self.robot_collisions)
         metrics_out["num_recv_joystick"] = len(self.robot.joystick_inputs)
         metrics_out["num_exec_robot"] = self.robot.num_executed
 

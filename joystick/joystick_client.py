@@ -5,6 +5,11 @@ from params.central_params import create_joystick_params
 from joystick_py.joystick_base import JoystickBase
 from joystick_py.joystick_planner import JoystickWithPlanner, JoystickWithPlannerPosns
 from joystick_py.joystick_random import JoystickRandom
+from RVO2.joystick_RVO import JoystickRVO
+from RVO2.joystick_RVO_with_checkpoints import JoystickRVOwCkpt
+from social_force.joystick_social_force import JoystickSocialForce
+#from sacadrl.joystick_sacadrl import JoystickSACADRL
+#from sacadrl.joystick_sacadrl_with_checkpoints import JoystickSACADRLwCkpt
 
 
 def run_joystick(J: JoystickBase) -> None:
@@ -35,17 +40,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--algo",
         type=str.lower,
-        default="sampling",
+        default="rvowckpt",
         choices=[
             "sampling",
             "random",
             "randomcpp",
             "rvo",
             "rvowckpt",
-            "sacadrl",
-            "sacadrlwckpt",
-            "social_forces",
-        ],
+            "socialforce",
+        ], #            "sacadrl",            "sacadrlwckpt",
         help="Choose the specific joystick algorithm to run in the simulation",
     )
     args = parser.parse_args()
@@ -62,25 +65,15 @@ if __name__ == "__main__":
     elif args.algo.lower() == "randomcpp":
         raise NotImplementedError  # run subprocess of cpp binary
     elif args.algo.lower() == "rvo":
-        from RVO2.joystick_RVO import JoystickRVO
-
         J = JoystickRVO()
     elif args.algo.lower() == "rvowckpt":
-        from RVO2.joystick_RVO_with_checkpoints import JoystickRVOwCkpt
-
         J = JoystickRVOwCkpt()
-    elif args.algo.lower() == "social_forces":
-        from social_force.joystick_social_force import JoystickSocialForce
-
+    elif args.algo.lower() == "socialforce":
         J = JoystickSocialForce()
-    elif args.algo.lower() == "sacadrl":
-        from sacadrl.joystick_sacadrl import JoystickSACADRL
-
-        J = JoystickSACADRL()
-    elif args.algo.lower() == "sacadrlwckpt":
-        from sacadrl.joystick_sacadrl_with_checkpoints import JoystickSACADRLwCkpt
-
-        J = JoystickSACADRLwCkpt()
+    #elif args.algo.lower() == "sacadrl":
+    #   J = JoystickSACADRL()
+    #elif args.algo.lower() == "sacadrlwckpt":
+    #    J = JoystickSACADRLwCkpt()
     else:
         raise NotImplementedError
 
