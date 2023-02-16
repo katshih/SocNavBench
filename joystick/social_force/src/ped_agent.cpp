@@ -232,6 +232,26 @@ void Ped::Tagent::setfactorlookaheadforce(double f) {
     factorlookaheadforce = f;
 }
 
+void Ped::Tagent::setobstaclesigma(double f) {
+    obstacleForceSigma = f;
+}
+
+void Ped::Tagent::setlambda(double f) {
+    lambdaImportance = f;
+}
+
+void Ped::Tagent::setgamma(double f) {
+    gamma_speed = f;
+}
+
+void Ped::Tagent::setn(double f) {
+    n = f;
+}
+
+void Ped::Tagent::setnprime(double f) {
+    n_prime = f;
+}
+
 
 /// Calculates the force between this agent and the next assigned waypoint.  If
 /// the waypoint has been reached, the next waypoint in the list will be
@@ -321,21 +341,6 @@ Ped::Tvector Ped::Tagent::desiredForce() {
 /// \date    2012-01-17
 /// \return  Tvector: the calculated force
 Ped::Tvector Ped::Tagent::socialForce(const set<const Ped::Tagent*> &neighbors) {
-    // define relative importance of position vs velocity vector
-    // (set according to Moussaid-Helbing 2009)
-    const double lambdaImportance = 2.0;
-
-    // define speed interaction
-    // (set according to Moussaid-Helbing 2009)
-    const double gamma = 0.35;
-
-    // define speed interaction
-    // (set according to Moussaid-Helbing 2009)
-    const double n = 2;
-
-    // define angular interaction
-    // (set according to Moussaid-Helbing 2009)
-    const double n_prime = 3;
 
     Tvector force;
     for (const Ped::Tagent* other: neighbors) {
@@ -365,7 +370,7 @@ Ped::Tvector Ped::Tagent::socialForce(const set<const Ped::Tagent*> &neighbors) 
         int thetaSign = (theta == 0) ? (0) : (theta / abs(theta));
 
         // compute model parameter B = gamma * ||D||
-        double B = gamma * interactionLength;
+        double B = gamma_speed * interactionLength;
 
         // According to paper, this should be the sum of the two forces...
 //          force += -exp(-diff.length()/B)

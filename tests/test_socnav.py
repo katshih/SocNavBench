@@ -72,7 +72,7 @@ def create_params() -> DotMap:
     return p
 
 
-def test_socnav() -> None:
+def test_socnav(render: bool) -> None:
     """
     Code for loading random humans into the environment
     and rendering topview, rgb, and depth images.
@@ -123,12 +123,19 @@ def test_socnav() -> None:
 
         # run simulation & render
         simulator.simulate()
-        simulator.render(r, filename=episode.name + "_obs")
+        if render:
+            simulator.render(r, filename=episode.name + "_obs")
 
     if not p.episode_params.without_robot:
         RobotAgent.close_robot_sockets()
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser(
+                    prog = 'SocNavBench',
+                    epilog = 'Text at the bottom of help')
+    parser.add_argument('--render', action='store_true')
+    args = parser.parse_args()
     # run basic room test with variable # of human
-    test_socnav()
+    test_socnav(args.render)

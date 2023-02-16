@@ -12,14 +12,27 @@
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <string.h> 
+#include "argparse.hpp"
+
 
 #define MAX_AGENT 500
 #define MAX_OBSTACLE 9999
 #define PORT 2112
 
-#define SF_FACTOR 10
-#define DE_FACTOR 1
-#define OB_FACTOR 3
+
+float sf_factor = 10;
+float de_factor = 1;
+float ob_factor = 3;
+
+float de_factorC = 1000;
+float crit_factor = 4;
+
+float la_factor = 1;
+float of_sigma = 0.8;
+float lambda_imp = 2.0;
+float gamma_speed = 0.35;
+float ped_n = 2;
+float ped_nprime = 3; 
 
 struct Agent
 {
@@ -231,8 +244,56 @@ void sendCommands(Ped::Tvector robot_pos, int socket) {
     return;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    argparse::ArgumentParser program("main");
+
+    program.add_argument("sf").default_value(sf_factor).scan<'f', float>();
+    program.add_argument("de").default_value(de_factor).scan<'f', float>();
+    program.add_argument("ob").default_value(ob_factor).scan<'f', float>();
+
+    program.add_argument("deC").default_value(de_factorC).scan<'f', float>();
+    program.add_argument("crit").default_value(crit_factor).scan<'f', float>();
+
+    program.add_argument("la").default_value(la_factor).scan<'f', float>();
+
+    program.add_argument("sigma").default_value(of_sigma).scan<'f', float>();
+    program.add_argument("lambda").default_value(lambda_imp).scan<'f', float>();
+    program.add_argument("gamma").default_value(gamma_speed).scan<'f', float>();
+    program.add_argument("ped_n").default_value(ped_n).scan<'f', float>();
+    program.add_argument("ped_nprime").default_value(ped_nprime).scan<'f', float>();
+
+    try {
+        program.parse_args(argc, argv); 
+    }
+    catch (const std::runtime_error& err) {
+        std::cerr << err.what() << std::endl;
+        std::cerr << program;
+        std::exit(1);
+    }
+
+    sf_factor = program.get<float>("sf");
+    de_factor = program.get<float>("de");
+    ob_factor = program.get<float>("ob");
+
+    de_factorC = program.get<float>("deC");
+    crit_factor = program.get<float>("crit");
+    
+    la_factor = program.get<float>("la");
+
+    of_sigma = program.get<float>("sigma");
+    lambda_imp = program.get<float>("lambda");
+    gamma_speed = program.get<float>("gamma");
+    ped_n = program.get<float>("ped_n");
+    ped_nprime = program.get<float>("ped_nprime");
+
+    std::cout << sf_factor << " " << de_factor << " " << ob_factor << " "; 
+    std::cout << de_factorC << " " << crit_factor << " ";
+
+    std::cout << la_factor << " ";
+    std::cout << of_sigma << " " << lambda_imp << " ";
+    std::cout << gamma_speed << " " << ped_n << " "  << ped_nprime << std::endl;;
+
     int socket;
     int end_flag;
     float goal_radius = 0.001;
@@ -248,17 +309,31 @@ int main()
             information.robot.goal_x, information.robot.goal_y, goal_radius);
         robot->addWaypoint(robot_goal);
 
-        float crit_dist = 4 * information.robot.radius;
+        float crit_dist = crit_factor * information.robot.radius;
         float goal_dist = sqrt(pow(information.robot.x - information.robot.goal_x, 2) + 
                                pow(information.robot.y - information.robot.goal_y, 2));
         if (goal_dist <= crit_dist) {
-            robot->setfactorsocialforce(SF_FACTOR);
-            robot->setfactordesiredforce(1000);
-            robot->setfactorobstacleforce(OB_FACTOR);
+            robot->setfactorsocialforce(sf_factor);
+            robot->setfactordesiredforce(de_factorC);
+            robot->setfactorobstacleforce(ob_factor);
+            robot->setfactorlookaheadforce(la_factor);
+
+            robot->setobstaclesigma(of_sigma);
+            robot->setlambda(lambda_imp);
+            robot->setgamma(gamma_speed);
+            robot->setn(ped_n);
+            robot->setnprime(ped_nprime); 
         } else {
-            robot->setfactorsocialforce(SF_FACTOR);
-            robot->setfactordesiredforce(DE_FACTOR);
-            robot->setfactorobstacleforce(OB_FACTOR);
+            robot->setfactorsocialforce(sf_factor);
+            robot->setfactordesiredforce(de_factor);
+            robot->setfactorobstacleforce(ob_factor);
+            robot->setfactorlookaheadforce(la_factor);
+
+            robot->setobstaclesigma(of_sigma);
+            robot->setlambda(lambda_imp);
+            robot->setgamma(gamma_speed);
+            robot->setn(ped_n);
+            robot->setnprime(ped_nprime);
         }
 
         robot->setPosition(information.robot.x, information.robot.y, 0);

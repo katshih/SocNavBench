@@ -86,6 +86,11 @@ namespace Ped {
         void setfactordesiredforce(double f);
         void setfactorlookaheadforce(double f);
 
+        void setobstaclesigma(double f);
+        void setlambda(double f);
+        void setgamma(double f);
+        void setn(double f);
+        void setnprime(double f);
         void setscene(Tscene* s);
         Tscene* getscene();
 
@@ -128,9 +133,26 @@ namespace Ped {
         double factordesiredforce;
         double factorsocialforce;
         double factorobstacleforce;
+
+        // NEW?
         double factorlookaheadforce;
 
-        double obstacleForceSigma;
+        double obstacleForceSigma  = 0.8;
+        // define relative importance of position vs velocity vector
+        // (set according to Moussaid-Helbing 2009)
+        double lambdaImportance = 2.0;
+
+        // define speed interaction
+        // (set according to Moussaid-Helbing 2009)
+        double gamma_speed = 0.35;
+
+        // define speed interaction
+        // (set according to Moussaid-Helbing 2009)
+        double n = 2;
+
+        // define angular interaction
+        // (set according to Moussaid-Helbing 2009)
+        double n_prime = 3;
 
         Ped::Tvector desiredforce;
         Ped::Tvector socialforce;
