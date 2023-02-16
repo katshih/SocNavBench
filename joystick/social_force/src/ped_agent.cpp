@@ -252,6 +252,10 @@ void Ped::Tagent::setnprime(double f) {
     n_prime = f;
 }
 
+void Ped::Tagent::setepsilon(double f) {
+    epsilon = f;
+}
+
 
 /// Calculates the force between this agent and the next assigned waypoint.  If
 /// the waypoint has been reached, the next waypoint in the list will be
@@ -365,12 +369,12 @@ Ped::Tvector Ped::Tagent::socialForce(const set<const Ped::Tagent*> &neighbors) 
         double interactionLength = interactionVector.length();
         Tvector interactionDirection = interactionVector / interactionLength;
 
-        // compute angle theta (between interaction and position difference vector)
-        double theta = interactionDirection.angleTo(diffDirection);
-        int thetaSign = (theta == 0) ? (0) : (theta / abs(theta));
-
         // compute model parameter B = gamma * ||D||
         double B = gamma_speed * interactionLength;
+
+        // compute angle theta (between interaction and position difference vector)
+        double theta = interactionDirection.angleTo(diffDirection) + epsilon*B;
+        int thetaSign = (theta == 0) ? (0) : (theta / abs(theta));
 
         // According to paper, this should be the sum of the two forces...
 //          force += -exp(-diff.length()/B)

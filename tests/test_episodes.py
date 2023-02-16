@@ -100,7 +100,7 @@ def test_episodes() -> None:
 
         # run simulation & render
         simulator.simulate()
-        #simulator.render(r, filename=episode.name + "_obs")
+        simulator.render(r, filename=episode.name + "_obs")
 
     if not p.episode_params.without_robot:
         RobotAgent.close_robot_sockets()

@@ -34,6 +34,8 @@ float gamma_speed = 0.35;
 float ped_n = 2;
 float ped_nprime = 3; 
 
+float epsilon = 0.005;
+
 struct Agent
 {
     std::string name;
@@ -263,6 +265,8 @@ int main(int argc, char *argv[])
     program.add_argument("ped_n").default_value(ped_n).scan<'f', float>();
     program.add_argument("ped_nprime").default_value(ped_nprime).scan<'f', float>();
 
+    program.add_argument("epsilon").default_value(epsilon).scan<'f', float>();
+
     try {
         program.parse_args(argc, argv); 
     }
@@ -287,12 +291,14 @@ int main(int argc, char *argv[])
     ped_n = program.get<float>("ped_n");
     ped_nprime = program.get<float>("ped_nprime");
 
+    epsilon = program.get<float>("epsilon");
+
     std::cout << sf_factor << " " << de_factor << " " << ob_factor << " "; 
     std::cout << de_factorC << " " << crit_factor << " ";
 
     std::cout << la_factor << " ";
     std::cout << of_sigma << " " << lambda_imp << " ";
-    std::cout << gamma_speed << " " << ped_n << " "  << ped_nprime << std::endl;;
+    std::cout << gamma_speed << " " << ped_n << " "  << ped_nprime << " " << epsilon << std::endl;;
 
     int socket;
     int end_flag;
@@ -322,7 +328,8 @@ int main(int argc, char *argv[])
             robot->setlambda(lambda_imp);
             robot->setgamma(gamma_speed);
             robot->setn(ped_n);
-            robot->setnprime(ped_nprime); 
+            robot->setnprime(ped_nprime);
+            robot->setepsilon(epsilon); 
         } else {
             robot->setfactorsocialforce(sf_factor);
             robot->setfactordesiredforce(de_factor);
@@ -334,6 +341,7 @@ int main(int argc, char *argv[])
             robot->setgamma(gamma_speed);
             robot->setn(ped_n);
             robot->setnprime(ped_nprime);
+            robot->setepsilon(epsilon);
         }
 
         robot->setPosition(information.robot.x, information.robot.y, 0);
