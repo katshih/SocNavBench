@@ -20,7 +20,7 @@ from utils.socnav_utils import construct_environment
 random.seed(get_seed())
 
 
-def create_params(runall: bool) -> DotMap:
+def create_params(seqs: list) -> DotMap:
     p: DotMap = create_socnav_params()
 
     # The camera is assumed to be mounted on a robot at fixed height
@@ -38,7 +38,7 @@ def create_params(runall: bool) -> DotMap:
     # Introduce the episode params
     from params.central_params import create_episodes_params
 
-    p.episode_params = create_episodes_params(runall)
+    p.episode_params = create_episodes_params(seqs)
 
     # Tilt the camera 10 degree down from the horizontal axis
     p.robot_params.physical_params.camera_elevation_degree = -10
@@ -52,12 +52,12 @@ def create_params(runall: bool) -> DotMap:
     return p
 
 
-def test_episodes(render: bool,runall: bool,out_dir: str) -> None:
+def test_episodes(render: bool,seqs: list,out_dir: str) -> None:
     """
     Code for loading a random human into the environment
     and rendering topview, rgb, and depth images.
     """
-    p: DotMap = create_params(runall)  # used to instantiate the camera and its parameters
+    p: DotMap = create_params(seqs)  # used to instantiate the camera and its parameters
 
     RobotAgent.establish_joystick_handshake(p)
 
@@ -114,8 +114,8 @@ if __name__ == "__main__":
                     prog = 'SocNavBench',
                     epilog = 'Text at the bottom of help')
     parser.add_argument('--render', action='store_true')
-    parser.add_argument('--all', action='store_true')
+    parser.add_argument('seqs', nargs='*')
     parser.add_argument('--dir', default='test')
     args = parser.parse_args()
     # run basic room test with variable # of human
-    test_episodes(args.render,args.all,args.dir)
+    test_episodes(args.render,args.seqs,args.dir)

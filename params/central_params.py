@@ -152,14 +152,14 @@ def create_test_params(test: str) -> DotMap:
     return p
 
 
-def create_episodes_params(runall: bool = False) -> DotMap:
+def create_episodes_params(seqs: list = []) -> DotMap:
     p = DotMap()
     # Load the dependencies
     epi_p = episodes_config["episodes_params"]
     p.without_robot = epi_p.getboolean("without_robot")
     # NOTE: uses a dictionary of DotMaps to use string notation
-    tests = eval(epi_p.get("tests"))
-    if len(tests) == 0 or runall:
+    tests = seqs
+    if len(tests) == 0 :
         tests = episodes_config.sections()[1:]
     test_dict = {}
     for t in tests:
