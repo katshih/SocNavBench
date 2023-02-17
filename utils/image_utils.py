@@ -190,7 +190,7 @@ def save_to_gif_with_ffmpeg(
 
         mp4_filename: str = "{}.mp4".format(filename)
         gif_filename: str = "{}.gif".format(filename)
-        all_png_files: str = os.path.join(IMAGES_DIR, "*.png")
+        all_png_files: str = os.path.join(IMAGES_DIR, "*.jpg")
         print("Rendering movie with ffmpeg -> mp4 -> gif")
         ffmpeg_pngs_to_mp4: str = "ffmpeg {ow} {logs} {fps} {inputs} {mp4} {q} {out}".format(
             ow="-y",  # force overwrite
@@ -205,7 +205,7 @@ def save_to_gif_with_ffmpeg(
         os.chdir(IMAGES_DIR)  # make sure to go to the output dir
         error_val = subprocess.call(ffmpeg_pngs_to_mp4, shell=True)
         if error_val:
-            raise Exception("ffmpeg (png's -> mp4) error {}".format(error_val))
+            raise Exception("ffmpeg (jpg's -> mp4) error {}".format(error_val))
         assert os.path.exists(os.path.join(IMAGES_DIR, mp4_filename))
         print(
             "{}Rendered mp4 at {}{}".format(
@@ -246,7 +246,7 @@ def save_to_gif_with_ffmpeg(
 
 def save_to_gif_with_imageio(filename: str, IMAGES_DIR: str, fps: float) -> bool:
     gif_filename: str = os.path.join(IMAGES_DIR, "{}.gif".format(filename))
-    files: List[str] = natural_sort(glob.glob(os.path.join(IMAGES_DIR, "*.png")))
+    files: List[str] = natural_sort(glob.glob(os.path.join(IMAGES_DIR, "*.jpg")))
     with imageio.get_writer(gif_filename, mode="I", fps=fps) as writer:
         for i, png_filename in enumerate(files):
             try:
@@ -298,7 +298,7 @@ def save_to_gif(
     else:
         save_to_gif_with_imageio(filename, IMAGES_DIR, fps)
 
-    files: List[str] = natural_sort(glob.glob(os.path.join(IMAGES_DIR, "*.png")))
+    files: List[str] = natural_sort(glob.glob(os.path.join(IMAGES_DIR, "*.jpg")))
     if clear_old_files:
         for f in files:
             os.remove(f)
