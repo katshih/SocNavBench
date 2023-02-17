@@ -31,7 +31,10 @@ random.seed(get_seed())
 
 
 class JoystickBase:
-    def __init__(self, algorithm_name: Optional[str] = "socnav"):
+    def __init__(self, 
+        dir_name: str = 'test',
+        algorithm_name: Optional[str] = "socnav"):
+        self.dir_name = dir_name
         self.joystick_params: DotMap = create_joystick_params()
         self.algorithm_name: str = algorithm_name
         print("Joystick running %s algorithm" % self.algorithm_name)
@@ -274,7 +277,7 @@ class JoystickBase:
                 # NOTE: this MUST match the directory name in Simulator
                 self.dirname = (
                     "tests/socnav/"
-                    + "test_"
+                    + self.dir_name + "_"
                     + self.algorithm_name
                     + "/"
                     + self.current_ep.get_name()

@@ -610,8 +610,8 @@ class SimState:
             f"sim_state_{sim_t:.4f}.json",
         )
 
-    @staticmethod
     def draw_variants(
+        self,
         env: Dict[str, Any],
         sim_t: float,
         ax: pyplot.Axes,
@@ -634,33 +634,31 @@ class SimState:
                 else:
                     continue  # just skip alltogether, file does not exist
 
-            with open(exp_sim_state_file, "r") as f:
-                sim_state = SimState.from_json(json.load(f))
-                if algo == max(max_algo_times, key=max_algo_times.get):
-                    sim_state.environment = env
-                    sim_state.render(ax, p)  # render the sim_state of the slowest
-                rob = sim_state.get_robot()
-                algo_params: DotMap = p.draw_parallel_robots_params_by_algo[algo]
-                rob.render(ax, algo_params)
-                if p.draw_mark_of_shame and sim_t >= rob.last_collision_t:
-                    assert p.robot_render_params.collision_mini_dot_mpl_kwargs
-                    x, y, _ = np.squeeze(rob.current_config.position_and_heading_nk3())
-                    ax.plot(x, y, **p.robot_render_params.collision_mini_dot_mpl_kwargs)
-                    rob_label: str = algo_params["body_normal_mpl_kwargs"]["label"]
-                    p.collided_robots.append(rob_label)  # track this robot as "shamed"
-                for pedestrian in sim_state.pedestrians.values():
-                    if (
-                        pedestrian.collision_cooldown is not None
-                        and pedestrian.collision_cooldown > 0
-                    ):
-                        pedestrian.render(ax, p.human_render_params)
-                # draw legend last (after all other agents/robots)
-                sim_state.draw_legend(ax, p)
+            if algo == max(max_algo_times, key=max_algo_times.get):
+                self.environment = env
+                self.render(ax, p)  # render the sim_state of the slowest
+            rob = self.get_robot()
+            algo_params: DotMap = p.draw_parallel_robots_params_by_algo[algo]
+            rob.render(ax, algo_params)
+            if p.draw_mark_of_shame and sim_t >= rob.last_collision_t:
+                assert p.robot_render_params.collision_mini_dot_mpl_kwargs
+                x, y, _ = np.squeeze(rob.current_config.position_and_heading_nk3())
+                ax.plot(x, y, **p.robot_render_params.collision_mini_dot_mpl_kwargs)
+                rob_label: str = algo_params["body_normal_mpl_kwargs"]["label"]
+                p.collided_robots.append(rob_label)  # track this robot as "shamed"
+            for pedestrian in self.pedestrians.values():
+                if (
+                    pedestrian.collision_cooldown is not None
+                    and pedestrian.collision_cooldown > 0
+                ):
+                    pedestrian.render(ax, p.human_render_params)
+            # draw legend last (after all other agents/robots)
+            self.draw_legend(ax, p)
         # reset tracking which robots collided on this frame
         p.collided_robots = []
 
-    @staticmethod
     def render_multi_robot(
+        self,
         env: Dict[str, Any],
         sim_t: float,
         p: DotMap,
@@ -674,7 +672,7 @@ class SimState:
         ax.set_title("Multi-robot Schematic View. t={:.3f}".format(sim_t), fontsize=14)
         ax.set_aspect("equal")
         # draw the SimStates
-        SimState.draw_variants(env, sim_t, ax, max_algo_times, p.render_params)
+        self.draw_variants(env, sim_t, ax, max_algo_times, p.render_params)
         # save the fig to file
         full_file_name = os.path.join(p.output_directory, filename)
         if not os.path.exists(full_file_name):

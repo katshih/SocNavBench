@@ -15,11 +15,12 @@ class JoystickRemote(JoystickBase):
 
     def __init__(
         self,
+        dir_name: str = 'test',
         algo_name: Optional[str] = "remote",
         HOST: Optional[str] = "127.0.0.1",
         PORT: Optional[int] = 2111,
     ):
-        super().__init__(algo_name)
+        super().__init__(dir_name,algo_name)
         self.agents = None
         self.agent_radius = None
         self.robot = None

@@ -310,36 +310,15 @@ class SimulatorHelper(object):
                 color_text["reset"],
             )
         )
-        common_env: Dict[str, Any] = None
+        common_env: Dict[str, Any] = self.environment
 
         # collect list of sim_states to render
         sim_state_bank = list(self.sim_states.values())
 
         # optionally (for multi-robot rendering) render this instead
-        if self.params.render_params.draw_parallel_robots:
-            if self.params.output_directory is None:
-                self.params.output_directory = os.path.join(
-                    self.params.socnav_params.socnav_dir,
-                    "tests",
-                    "socnav",
-                    "test_multi_robot",
-                    self.episode_params.name,
-                )
-                self.params.render_params.output_directory = (
-                    self.params.output_directory
-                )
-                self.params.render_params.test_name = self.episode_params.name
 
-            max_algo_times: Dict[str, float] = SimState.get_max_parallel_sim_states(
-                self.params.render_params
-            )
-            max_sim_t = max(max_algo_times.values())
-            num_states_per_proc = int(np.ceil((max_sim_t / self.dt) / num_cores))
-            common_env = SimState.get_common_env(self.params.render_params)
-            num_frames = num_states_per_proc * num_cores
-        else:
-            num_states_per_proc = int(np.ceil(len(self.sim_states) / num_cores))
-            num_frames = int(np.ceil(len(sim_state_bank)))
+        num_states_per_proc = int(np.ceil(len(self.sim_states) / num_cores))
+        num_frames = int(np.ceil(len(sim_state_bank)))
 
         start_time = float(time.time())
 
@@ -351,11 +330,11 @@ class SimulatorHelper(object):
                 sim_idx: int = procID + i * num_cores
                 if self.params.render_params.draw_parallel_robots:
                     assert common_env is not None
-                    SimState.render_multi_robot(
+                    sim_state_bank[sim_idx].render_multi_robot(
                         env=common_env,
                         sim_t=sim_idx * self.dt,
                         p=self.params,
-                        max_algo_times=max_algo_times,
+                        max_algo_times=max(list(self.sim_states.keys())),
                         filename="{}_obs{:03d}.jpg".format(filename, sim_idx),
                     )
                 elif sim_idx < len(sim_state_bank):
