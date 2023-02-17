@@ -14,9 +14,6 @@ def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
 
     os.environ['PYTHONPATH'] = '.'
 
-    if set_s == 'all':
-        set_select = '--all'
-
     test_s = subprocess.Popen(['python', 'tests/test_episodes.py','--dir',base_name] + set_s,env=os.environ)#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     time.sleep(1)
     joystick_s = subprocess.Popen(['python', 'joystick/joystick_client.py','--algo','socialforce'],env=os.environ)#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
