@@ -81,7 +81,7 @@ class Simulator(SimulatorHelper):
         # else just run until there are no more agents
         return self.exists_running_agent() or self.exists_running_prerec()
 
-    def simulate(self) -> None:
+    def simulate(self,out_dir: str = 'test') -> None:
         """ A function that simulates an entire episode. The gen_agents are updated with simultaneous
         threads running their update() functions and updating the robot with commands from the
         external joystick process.
@@ -93,7 +93,7 @@ class Simulator(SimulatorHelper):
         # get initial state
         current_state: SimState = self.save_state()
         # initialize robot update thread
-        r_t: threading.Thread = self.init_robot_listener_thread(current_state)
+        r_t: threading.Thread = self.init_robot_listener_thread(current_state,out_dir=out_dir)
         # start iteration
         iteration: int = 0
         self.print_sim_progress(iteration)
@@ -375,7 +375,7 @@ class Simulator(SimulatorHelper):
     """ BEGIN ROBOT UTILS """
 
     def init_robot_listener_thread(
-        self, current_state: SimState, power_on: Optional[bool] = True
+        self, current_state: SimState, power_on: Optional[bool] = True, out_dir: str = 'test'
     ) -> Optional[threading.Thread]:
         """Initializes the robot listener by establishing socket connections to
         the joystick, transmitting the (constant) obstacle map (environment),
@@ -419,7 +419,7 @@ class Simulator(SimulatorHelper):
         self.params.output_directory = os.path.join(
             self.params.socnav_params.socnav_dir,
             "tests/socnav/",
-            "test_" + self.algo_name,
+            out_dir + "_" + self.algo_name,
             self.episode_params.name,
         )
         self.params.render_params.output_directory = self.params.output_directory

@@ -192,13 +192,14 @@ def save_to_gif_with_ffmpeg(
         gif_filename: str = "{}.gif".format(filename)
         all_png_files: str = os.path.join(IMAGES_DIR, "*.jpg")
         print("Rendering movie with ffmpeg -> mp4 -> gif")
-        ffmpeg_pngs_to_mp4: str = "ffmpeg {ow} {logs} {fps} {inputs} {mp4} {q} {out}".format(
+        ffmpeg_pngs_to_mp4: str = "ffmpeg {ow} {logs} {fps} {inputs} {mp4} {q} {pad} {out}".format(
             ow="-y",  # force overwrite
             logs="-hide_banner -loglevel error",  # ignore logs
             fps="-framerate {}".format(fps),  # set framerate of resulting movie
             inputs="-pattern_type glob -i '{}'".format(all_png_files),
-            mp4="-c:v mpeg4 -pix_fmt yuv420p",  # video codec
-            q="-qscale 0",  # decrease the quality by 0
+            mp4="-c:v h264 -pix_fmt yuv420p",  # video codec
+            q="-preset veryfast",  # decrease the quality by 0
+            pad='-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2"', # make image work
             out=mp4_filename,
         )
         og_dir: str = os.getcwd()  # make sure to return to this directory after rendering
@@ -214,20 +215,20 @@ def save_to_gif_with_ffmpeg(
         )
         # successfully rendered the mp4, now converting that to gif
         # render gif
-        ffmpeg_mp4_to_gif: str = "ffmpeg {ow} {logs} {conversion}".format(
-            ow="-y",  # force overwrite
-            logs="-hide_banner -loglevel error",  # ignore logs
-            conversion="-i {} {}".format(mp4_filename, gif_filename),
-        )
-        error_val = subprocess.call(ffmpeg_mp4_to_gif, shell=True)
-        if error_val:
-            raise Exception("ffmpeg (mp4 -> gif) error {}".format(error_val))
-        assert os.path.exists(os.path.join(IMAGES_DIR, gif_filename))
-        print(
-            "{}Rendered gif at {}{}".format(
-                color_text["green"], gif_filename, color_text["reset"]
-            )
-        )
+        #ffmpeg_mp4_to_gif: str = "ffmpeg {ow} {logs} {conversion}".format(
+        #    ow="-y",  # force overwrite
+        #    logs="-hide_banner -loglevel error",  # ignore logs
+        #    conversion="-i {} {}".format(mp4_filename, gif_filename),
+        #)
+        #error_val = subprocess.call(ffmpeg_mp4_to_gif, shell=True)
+        #if error_val:
+        #    raise Exception("ffmpeg (mp4 -> gif) error {}".format(error_val))
+        #assert os.path.exists(os.path.join(IMAGES_DIR, gif_filename))
+        #print(
+        #    "{}Rendered gif at {}{}".format(
+        #        color_text["green"], gif_filename, color_text["reset"]
+        #    )
+        #)
         if clean_mp4 and os.path.exists(os.path.join(IMAGES_DIR, mp4_filename)):
             os.remove(os.path.join(IMAGES_DIR, mp4_filename))
             print("Removed mp4 file")

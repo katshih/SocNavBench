@@ -52,7 +52,7 @@ def create_params(runall: bool) -> DotMap:
     return p
 
 
-def test_episodes(render: bool,runall: bool) -> None:
+def test_episodes(render: bool,runall: bool,out_dir: str) -> None:
     """
     Code for loading a random human into the environment
     and rendering topview, rgb, and depth images.
@@ -99,7 +99,7 @@ def test_episodes(render: bool,runall: bool) -> None:
             simulator.add_agents(new_prerecs)
 
         # run simulation & render
-        simulator.simulate()
+        simulator.simulate(out_dir)
         if render: 
             simulator.render(r, filename=episode.name + "_obs")
 
@@ -115,7 +115,7 @@ if __name__ == "__main__":
                     epilog = 'Text at the bottom of help')
     parser.add_argument('--render', action='store_true')
     parser.add_argument('--all', action='store_true')
-
+    parser.add_argument('--dir', default='test')
     args = parser.parse_args()
     # run basic room test with variable # of human
-    test_episodes(args.render,args.all)
+    test_episodes(args.render,args.all,args.dir)
