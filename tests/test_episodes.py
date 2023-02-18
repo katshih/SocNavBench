@@ -52,7 +52,7 @@ def create_params(seqs: list) -> DotMap:
     return p
 
 
-def test_episodes(render: bool,seqs: list,out_dir: str) -> None:
+def test_episodes(render: bool,seqs: list,out_dir: str, rend_subset: int) -> None:
     """
     Code for loading a random human into the environment
     and rendering topview, rgb, and depth images.
@@ -101,7 +101,7 @@ def test_episodes(render: bool,seqs: list,out_dir: str) -> None:
         # run simulation & render
         simulator.simulate(out_dir)
         if render:
-            simulator.render(r, filename=episode.name + "_obs")
+            simulator.render(r, filename=episode.name + "_obs",render_subset=rend_subset)
 
     if not p.episode_params.without_robot:
         RobotAgent.close_robot_sockets()
@@ -116,6 +116,8 @@ if __name__ == "__main__":
     parser.add_argument('--render', action='store_true')
     parser.add_argument('seqs', nargs='*')
     parser.add_argument('--dir', default='test')
+    parser.add_argument('--subset', default=4,type=int)
+
     args = parser.parse_args()
     # run basic room test with variable # of human
-    test_episodes(args.render,args.seqs,args.dir)
+    test_episodes(args.render,args.seqs,args.dir,args.subset)
