@@ -119,19 +119,19 @@ def path_irregularity(
     if goal_config is None:
         goal_config = trajectory[-1, :]
     assert trajectory.shape[-1] == 3 and goal_config.shape[-1] == 3
-
+    
     # To compute the per step angle away from straight line to goal
     # compute the ray to goal from each traj step
     traj_xy = trajectory[:, :-1]
     point_to_goal_traj = np.squeeze(goal_config)[:-1] - traj_xy
     # cos inv of dot product of vectors
+
     cos_theta = np.sum(point_to_goal_traj * traj_xy, axis=1) / (
         np.linalg.norm(point_to_goal_traj, axis=1) * np.linalg.norm(traj_xy, axis=1)
-        + (1 / 1e10)
+        + (1e-10)
     )
-    theta_to_goal_traj = np.arccos(cos_theta)
+    theta_to_goal_traj = np.arccos(np.clip(cos_theta, -1, 1))
     path_irr = np.sum(np.abs(theta_to_goal_traj)) / len(theta_to_goal_traj)
-
     return path_irr
 
 
