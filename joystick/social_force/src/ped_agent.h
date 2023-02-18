@@ -91,6 +91,8 @@ namespace Ped {
         void setgamma(double f);
         void setn(double f);
         void setnprime(double f);
+        void setepsilon(double f);
+        
         void setscene(Tscene* s);
         Tscene* getscene();
 
@@ -153,6 +155,10 @@ namespace Ped {
         // define angular interaction
         // (set according to Moussaid-Helbing 2009)
         double n_prime = 3;
+
+        // define avoidance direction bias
+        // (set according to Moussaid-Helbing 2009)
+        double epsilon = 0.005;
 
         Ped::Tvector desiredforce;
         Ped::Tvector socialforce;

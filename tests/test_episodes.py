@@ -71,7 +71,7 @@ def test_episodes(render: bool,seqs: list,out_dir: str) -> None:
 
         """
         Creating planner, simulator, and control pipelines for the framework
-        of a human trajectory and pathfinding. 
+        of a human trajectory and pathfinding.
         """
         simulator = Simulator(environment, renderer=r, episode_params=episode)
         simulator.params.render_params.draw_parallel_robots = False  # force false
@@ -100,7 +100,7 @@ def test_episodes(render: bool,seqs: list,out_dir: str) -> None:
 
         # run simulation & render
         simulator.simulate(out_dir)
-        if render: 
+        if render:
             simulator.render(r, filename=episode.name + "_obs")
 
     if not p.episode_params.without_robot:
