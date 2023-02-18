@@ -7,6 +7,15 @@ import glob
 
 import numpy as np
 
+def eval_heuristic(res):
+    success = res['success']
+    time_taken = res['total_sim_time_taken']
+    collisions = res['total_collisions']
+    robot_motion = res['robot_motion_energy']
+    ped_dist = np.exp(-res['closest_pedestrian_distance']*2).sum()
+    costs_vec = [5.1-5*success,time_taken,collisions+1,robot_motion,ped_dist]
+    return np.prod(costs_vec)**(1/len(costs_vec)), costs_vec
+
 def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
     base_path = 'tests/socnav/{}_social_force'.format(base_name)
     if os.path.exists(base_path):
@@ -40,16 +49,12 @@ def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
         folder = out_f.split('/')[-2]
         res['filename'] = folder
         res['config_used'] = params
-        success = res['success']
-        time_taken = res['total_sim_time_taken']
-        collisions = res['total_collisions']
-        robot_motion = res['robot_motion_energy']
-        ped_dist = np.exp(-res['closest_pedestrian_distance']*2).sum()
-        costs = [5.1-5*success,time_taken,collisions+1,robot_motion,ped_dist]
-        total_costs_vec.append(costs)
+
+        cost, costs_vec = eval_heuristic(res)
+        total_costs_vec.append(costs_vec)
         log_file.append(res)
         
-    total_costs = np.prod(total_costs_vec,axis=1)**(1/len(costs))
+    total_costs = np.prod(total_costs_vec,axis=1)**(1/len(costs_vec))
     total_costs = total_costs.mean()
 
     return total_costs
