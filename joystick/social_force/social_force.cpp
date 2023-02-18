@@ -240,7 +240,7 @@ void sendCommands(Ped::Tvector robot_pos, int socket) {
     std::string command = std::to_string(robot_pos.x);
     command += ",";
     command += std::to_string(robot_pos.y);
-    std::cout << "=========================" << std::endl;
+    //std::cout << "=========================" << std::endl;
     const char* command_c = command.c_str();
     send(socket, command_c, strlen(command_c), 0);
     return;
@@ -373,8 +373,8 @@ int main(int argc, char *argv[])
 
         Ped::Tvector robot_new_pos = robot->getPosition();
         Ped::Tvector robot_vel = robot_new_pos - robot_old_pos;
-        std::cout << robot_vel.x << ", " << robot_vel.y << std::endl;
-        std::cout << robot_new_pos.x << ", " << robot_new_pos.y << std::endl;
+        //std::cout << robot_vel.x << ", " << robot_vel.y << std::endl;
+        //std::cout << robot_new_pos.x << ", " << robot_new_pos.y << std::endl;
 
         sendCommands(robot_new_pos, socket);
 

@@ -40,7 +40,7 @@ class JoystickRemote(JoystickBase):
                 print()
                 break
             except ConnectionRefusedError or TimeoutError:
-                sleep(1)
+                sleep(0.1)
                 print(".", end="", flush=True)
         print(
             "{}Connected to {} planner!{}".format(
@@ -175,16 +175,16 @@ class JoystickRemote(JoystickBase):
         coordinate_str = data_b.split(",")
         x = float(coordinate_str[0])
         y = float(coordinate_str[1])
-        print(
-            "R:({:.3f}, {:.3f}, {:.3f}), xy:({:.3f}, {:.3f}), @ t:{:.3f}s".format(
-                self.robot[0],
-                self.robot[1],
-                self.robot[2],
-                x,
-                y,
-                self.sim_state_now.sim_t,
-            )
-        )
+        #print(
+        #    "R:({:.3f}, {:.3f}, {:.3f}), xy:({:.3f}, {:.3f}), @ t:{:.3f}s".format(
+        #        self.robot[0],
+        #        self.robot[1],
+        #        self.robot[2],
+        #        x,
+        #        y,
+        #        self.sim_state_now.sim_t,
+        #    )
+        #)
         th = np.arctan2(y - self.robot[1], x - self.robot[0])
         if self.joystick_on:
             self.send_cmds([(x, y, th, 0)], send_vel_cmds=False)

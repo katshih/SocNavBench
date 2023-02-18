@@ -262,13 +262,13 @@ class JoystickBase:
             if self.joystick_params.track_sim_states:
                 self.sim_states[self.sim_state_now.get_sim_t()] = self.sim_state_now
 
-            print(
-                "Updated state of the world for time = %.3f out of %.3f\r"
-                % (self.sim_state_now.get_sim_t(), self.current_ep.get_time_budget()),
-                sep=" ",
-                end="",
-                flush=True,
-            )
+            #print(
+            #    "Updated state of the world for time = %.3f out of %.3f\r"
+            #    % (self.sim_state_now.get_sim_t(), self.current_ep.get_time_budget()),
+            #    sep=" ",
+            #    end="",
+            #    flush=True,
+            #)
 
             # self.track_vel_accel(self.sim_state_now)  # TODO: remove
 
