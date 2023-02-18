@@ -27,7 +27,7 @@ def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
     time.sleep(1)
     joystick_s = subprocess.Popen(['python', 'joystick/joystick_client.py','--algo','socialforce','--dir',base_name],env=os.environ)#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     time.sleep(1)
-    sf_exec = subprocess.Popen(['joystick/social_force/social_force'] + ['{:.3f}'.format(_) for _ in np.exp(params)])#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    sf_exec = subprocess.Popen(['joystick/social_force/social_force'] + ['{:.3f}'.format(_) for _ in list(np.exp(params[:-1])) + [params[-1]]])#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
     poll = test_s.poll()
     while poll is None:
