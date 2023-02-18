@@ -283,6 +283,7 @@ class SimulatorHelper(object):
         renderer: SocNavRenderer,
         camera_pos_13: Optional[np.ndarray] = None,
         filename: Optional[str] = "sim_render",
+        render_subset: Optional[int] = 1
     ) -> None:
         """Generates a png frame for each world state saved in self.sim_states. Note, based off the
         render_3D options, the function will generate the frames in multiple separate processes to
@@ -313,11 +314,12 @@ class SimulatorHelper(object):
         common_env: Dict[str, Any] = self.environment
 
         # collect list of sim_states to render
-        sim_state_bank = list(self.sim_states.values())
+        sim_state_keyset = sorted(list(self.sim_states.keys()))[::render_subset]
+        sim_state_bank = [self.sim_states[k] for k in sim_state_keyset]
 
         # optionally (for multi-robot rendering) render this instead
 
-        num_states_per_proc = int(np.ceil(len(self.sim_states) / num_cores))
+        num_states_per_proc = int(np.ceil(len(sim_state_bank) / num_cores))
         num_frames = int(np.ceil(len(sim_state_bank)))
 
         start_time = float(time.time())
