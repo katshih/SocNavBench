@@ -2,7 +2,7 @@ CXX = g++
 RM = rm -f
 INCLUDES = -I./src
 LIBS= src/libpedsim.a
-CXXFLAGS = ${INCLUDES} -std=c++17 -g -O0
+CXXFLAGS = ${INCLUDES} -std=c++17 -g -O2 -march=native
 PROGRAMS = social_force example01
 
 all: $(PROGRAMS) src/libpedsim.a

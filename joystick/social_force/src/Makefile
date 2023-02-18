@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -g -O0 -fno-inline -std=c++17
+CXXFLAGS = -g -O2 -march=native -fno-inline -std=c++17
 
 all: libpedsim.a
 
