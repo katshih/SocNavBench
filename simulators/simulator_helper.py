@@ -421,7 +421,7 @@ def sim_states_to_dataframe(sim) -> Tuple[pd.DataFrame, Dict[str, List[float]]]:
 
     cols = ["sim_step", "agent_name", "x", "y", "theta"]
     agent_info: Dict[str, List[float]] = {}  # later store traversibles
-    df = pd.DataFrame(columns=cols, dtype=np.float64)
+    df_t = []
 
     # TODO: vectorize!!
     for sim_step, sim_state in all_states.items():
@@ -444,7 +444,9 @@ def sim_states_to_dataframe(sim) -> Tuple[pd.DataFrame, Dict[str, List[float]]]:
             y: float = traj[1]
             th: float = traj[2]
 
-            df.loc[len(df)] = [sim_step, agent_name, x, y, th]
+            df_t.append([sim_step, agent_name, x, y, th])
+    
+    df = pd.DataFrame(df_t,columns=cols, dtype=np.float64)
 
     return df, agent_info
 
