@@ -15,13 +15,14 @@ def eval_heuristic(res):
     # ped_dist = np.exp(-res['closest_pedestrian_distance']*2).sum()
     # costs_vec = [5.1-5*success,time_taken,collisions+1,robot_motion,ped_dist]
 
+    success = res['success']
     goal_rat = res['goal_traversal_ratio']
-    path_irr = res['path_irregularity']
-    travel_time = (2*res['sim_time_budget'] if res['success'] == False else res['total_sim_time_taken'])/res['sim_time_budget']
+    path_irr = res['path_irregularity']/np.pi
+    travel_time = (res['total_sim_time_taken'] if success else 2*res['sim_time_budget'])/res['sim_time_budget']
     close_time = ((res['closest_pedestrian_distance'] < .6).sum()/len(res['closest_pedestrian_distance']))
     time_to_coll = np.exp(-np.array([10 if x < 0 else min(x, 10) for x in res['time_to_collision']])).sum()
 
-    costs_vec = [(goal_rat + 0.1)**2, path_irr + 0.1, travel_time + 0.1, close_time + 0.1, time_to_coll]
+    costs_vec = [(goal_rat + 0.1)**2, 1.1 - success, path_irr + 0.1, travel_time + 0.1, close_time + 0.1, time_to_coll**.5]
 
     return np.prod(costs_vec)**(1/len(costs_vec)), costs_vec
 
