@@ -52,6 +52,8 @@ if __name__ == "__main__":
         help="Choose the specific joystick algorithm to run in the simulation",
     )
     parser.add_argument('--dir', default='test')
+    parser.add_argument('-p', default=2112,type=int)
+    parser.add_argument('--suffix', default='')
 
     args = parser.parse_args()
     joystick_params = create_joystick_params()
@@ -71,7 +73,7 @@ if __name__ == "__main__":
     elif args.algo.lower() == "rvowckpt":
         J = JoystickRVOwCkpt()
     elif args.algo.lower() == "socialforce":
-        J = JoystickSocialForce(args.dir)
+        J = JoystickSocialForce(args.dir,args.suffix,args.p)
     #elif args.algo.lower() == "sacadrl":
     #   J = JoystickSACADRL()
     #elif args.algo.lower() == "sacadrlwckpt":
