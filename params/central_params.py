@@ -72,12 +72,12 @@ def create_socnav_params() -> DotMap:
     return p
 
 
-def create_robot_params() -> DotMap:
+def create_robot_params(suffix='') -> DotMap:
     p = DotMap()
     # Load the dependencies
     rob_p = user_config["robot_params"]
-    p.send_ID = rob_p.get("send_ID")
-    p.recv_ID = rob_p.get("recv_ID")
+    p.send_ID = rob_p.get("send_ID") + suffix
+    p.recv_ID = rob_p.get("recv_ID") + suffix
     p.max_repeats = max(0, rob_p.getint("max_repeats"))
     p.physical_params = DotMap(
         radius=rob_p.getfloat("radius_cm") / 100.0,

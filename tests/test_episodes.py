@@ -20,7 +20,7 @@ from utils.socnav_utils import construct_environment
 random.seed(get_seed())
 
 
-def create_params(seqs: list) -> DotMap:
+def create_params(seqs: list, suffix: str) -> DotMap:
     p: DotMap = create_socnav_params()
 
     # The camera is assumed to be mounted on a robot at fixed height
@@ -33,7 +33,7 @@ def create_params(seqs: list) -> DotMap:
     # Introduce the robot params
     from params.central_params import create_robot_params
 
-    p.robot_params = create_robot_params()
+    p.robot_params = create_robot_params(suffix)
 
     # Introduce the episode params
     from params.central_params import create_episodes_params
@@ -57,7 +57,7 @@ def test_episodes(render: bool,seqs: list,out_dir: str, rend_subset: int, suffix
     Code for loading a random human into the environment
     and rendering topview, rgb, and depth images.
     """
-    p: DotMap = create_params(seqs)  # used to instantiate the camera and its parameters
+    p: DotMap = create_params(seqs,suffix)  # used to instantiate the camera and its parameters
 
     RobotAgent.establish_joystick_handshake(p,suffix)
 
@@ -82,7 +82,7 @@ def test_episodes(render: bool,seqs: list,out_dir: str, rend_subset: int, suffix
 
         """Generate the robot in the simulator"""
         if not p.episode_params.without_robot:
-            robot_agent = RobotAgent.generate_robot(episode.robot_start_goal)
+            robot_agent = RobotAgent.generate_robot(episode.robot_start_goal,suffix=suffix)
             simulator.add_agent(robot_agent)
 
         """Add the prerecorded humans to the simulator"""

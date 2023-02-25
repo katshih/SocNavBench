@@ -26,11 +26,11 @@ class RobotAgent(Agent):
     # socket utils
     robot_receiver_socket: socket.socket = None
     robot_sender_socket: socket.socket = None
-    robot_receiver_id: str = create_robot_params().recv_ID
-    robot_sender_id: str = create_robot_params().send_ID
+    robot_receiver_id: str = None
+    robot_sender_id: str = None
 
     def __init__(
-        self, name: str, start_config: SystemConfig, goal_config: SystemConfig
+        self, name: str, start_config: SystemConfig, goal_config: SystemConfig, suffix: str
     ):
         super().__init__(start_config, goal_config, name)
         # positional inputs are tuples of (x, y, theta, velocity)
@@ -51,6 +51,7 @@ class RobotAgent(Agent):
         # robot initially has no knowledge of the planning algorithm
         # this is (optionally) sent by the joystick
         self.algo_name: str = "UnknownAlgo"
+        self.suffix = suffix
 
     def simulation_init(
         self,
@@ -67,7 +68,7 @@ class RobotAgent(Agent):
             keep_episode_running=keep_episode_running,
         )
         # this robot agent does not have a "planner" since that is done through the joystick
-        self.params.robot_params = create_robot_params()
+        self.params.robot_params = create_robot_params(self.suffix)
         # NOTE: robot radius is not the same as regular Agents
         self.radius: float = self.params.robot_params.physical_params.radius
         # velocity bounds when teleporting to positions (if not using sys dynamics)
@@ -88,7 +89,7 @@ class RobotAgent(Agent):
 
     @classmethod
     def generate_robot(
-        cls, start_goal: List[List[float]], verbose: Optional[bool] = False
+        cls, start_goal: List[List[float]], verbose: Optional[bool] = False, suffix: Optional[str] = ''
     ):
         """
         Sample a new random robot agent from all required features
@@ -100,7 +101,7 @@ class RobotAgent(Agent):
         np.set_printoptions(precision=2)
         if verbose:
             print("Robot", robot_name, "at", start, "with goal", goal)
-        return cls(robot_name, start, goal)
+        return cls(robot_name, start, goal, suffix)
 
     @classmethod
     def random_from_environment(
@@ -202,7 +203,7 @@ class RobotAgent(Agent):
                 if self.num_executed == len(self.joystick_inputs):
                     if self.joystick_requests_world == 0:
                         self.send_sim_state()
-                time.sleep(0.0001)
+                time.sleep(0.001)
             # capture how much time was spent blocking on joystick inputs
             self.block_time_total += time.time() - init_block_t
 
