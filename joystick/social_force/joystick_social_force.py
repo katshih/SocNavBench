@@ -7,7 +7,7 @@ from utils.utils import color_text
 
 
 class JoystickSocialForce(JoystickRemote):
-    def __init__(self, dir_name: str = 'test'):
+    def __init__(self, dir_name: str = 'test', suffix: str = '', port: int = 2112):
         print(
             f"{color_text['orange']}",
             "NOTE: in order to run the social-forces executable\n",
@@ -15,7 +15,7 @@ class JoystickSocialForce(JoystickRemote):
             "      and run `export LD_LIBRARY_PATH=./src`",
             f"{color_text['reset']}",
         )
-        super().__init__(dir_name=dir_name,algo_name="social_force", HOST="127.0.0.1", PORT=2112)
+        super().__init__(dir_name=dir_name,suffix=suffix,algo_name="social_force", HOST="127.0.0.1", PORT=port)
 
     def init_obstacle_map(self, env: Dict[str, Any]) -> ObstacleMap:
         scale = float(env["map_scale"])

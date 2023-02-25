@@ -17,8 +17,8 @@
 
 #define MAX_AGENT 500
 #define MAX_OBSTACLE 9999
-#define PORT 2112
 
+int NETWORK_PORT = 2112;
 
 float sf_factor = 10;
 float de_factor = 1;
@@ -105,7 +105,7 @@ int establishConnection() {
     }
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons( PORT );
+    address.sin_port = htons( NETWORK_PORT );
 
     if (bind(server_fd, (struct sockaddr*) &address, sizeof(address)) < 0)
     {
@@ -266,7 +266,8 @@ int main(int argc, char *argv[])
     program.add_argument("ped_nprime").default_value(ped_nprime).scan<'f', float>();
 
     program.add_argument("epsilon").default_value(epsilon).scan<'f', float>();
-
+    program.add_argument("-p").default_value(NETWORK_PORT).scan<'d', int>();
+    
     try {
         program.parse_args(argc, argv); 
     }
@@ -292,6 +293,11 @@ int main(int argc, char *argv[])
     ped_nprime = program.get<float>("ped_nprime");
 
     epsilon = program.get<float>("epsilon")/20.0f;
+
+    NETWORK_PORT = program.get<int>("-p");
+
+    std::cout << "USING PORT " << NETWORK_PORT << std::endl;
+
 
     std::cout << sf_factor << " " << de_factor << " " << ob_factor << " "; 
     std::cout << de_factorC << " " << crit_factor << " ";

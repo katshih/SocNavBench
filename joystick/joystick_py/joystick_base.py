@@ -33,6 +33,7 @@ random.seed(get_seed())
 class JoystickBase:
     def __init__(self, 
         dir_name: str = 'test',
+        suffix: str = '',
         algorithm_name: Optional[str] = "socnav"):
         self.dir_name = dir_name
         self.joystick_params: DotMap = create_joystick_params()
@@ -55,8 +56,8 @@ class JoystickBase:
         self.robot_sender_socket: socket.socket = None
         self.robot_receiver_socket: socket.socket = None  # world info receiver socket
         # flipped bc joystick-recv = robot-send & vice versa
-        self.send_ID: str = create_robot_params().recv_ID
-        self.recv_ID: str = create_robot_params().send_ID
+        self.send_ID: str = create_robot_params().recv_ID + suffix
+        self.recv_ID: str = create_robot_params().send_ID + suffix
         print(
             'Initiated joystick locally (AF_UNIX) at "%s" & "%s"'
             % (self.send_ID, self.recv_ID)

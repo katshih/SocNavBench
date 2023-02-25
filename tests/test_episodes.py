@@ -52,14 +52,14 @@ def create_params(seqs: list) -> DotMap:
     return p
 
 
-def test_episodes(render: bool,seqs: list,out_dir: str, rend_subset: int) -> None:
+def test_episodes(render: bool,seqs: list,out_dir: str, rend_subset: int, suffix: str) -> None:
     """
     Code for loading a random human into the environment
     and rendering topview, rgb, and depth images.
     """
     p: DotMap = create_params(seqs)  # used to instantiate the camera and its parameters
 
-    RobotAgent.establish_joystick_handshake(p)
+    RobotAgent.establish_joystick_handshake(p,suffix)
 
     for test in list(p.episode_params.tests.keys()):
         episode = p.episode_params.tests[test]
@@ -117,7 +117,8 @@ if __name__ == "__main__":
     parser.add_argument('seqs', nargs='*')
     parser.add_argument('--dir', default='test')
     parser.add_argument('--subset', default=4,type=int)
+    parser.add_argument('--suffix', default='')
 
     args = parser.parse_args()
     # run basic room test with variable # of human
-    test_episodes(args.render,args.seqs,args.dir,args.subset)
+    test_episodes(args.render,args.seqs,args.dir,args.subset,args.suffix)

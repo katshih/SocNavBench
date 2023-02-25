@@ -28,18 +28,18 @@ def eval_heuristic(res):
 
 
 
-def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
+def exec_seqs(params,base_name='local',set_s=[],log_file=[],port=2112):
     base_path = 'tests/socnav/{}_social_force'.format(base_name)
     if os.path.exists(base_path):
         shutil.rmtree(base_path)
 
     os.environ['PYTHONPATH'] = '.'
-
-    test_s = subprocess.Popen(['python', 'tests/test_episodes.py','--dir',base_name] + set_s,env=os.environ)#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    assert(len(base_name) != 0)
+    test_s = subprocess.Popen(['python', 'tests/test_episodes.py','--suffix',base_name,'--dir',base_name] + set_s,env=os.environ)#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     time.sleep(0.5)
-    joystick_s = subprocess.Popen(['python', 'joystick/joystick_client.py','--algo','socialforce','--dir',base_name],env=os.environ)#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    joystick_s = subprocess.Popen(['python', 'joystick/joystick_client.py','-p',str(port),'--suffix',base_name,'--algo','socialforce','--dir',base_name],env=os.environ)#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     time.sleep(0.5)
-    sf_exec = subprocess.Popen(['joystick/social_force/social_force'] + ['{:.3f}'.format(_) for _ in list(np.exp(params[:-1])) + [params[-1]]])#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    sf_exec = subprocess.Popen(['joystick/social_force/social_force','-p',str(port)] + ['{:.3f}'.format(_) for _ in list(np.exp(params[:-1])) + [params[-1]]])#,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 
     poll = test_s.poll()
     while poll is None:

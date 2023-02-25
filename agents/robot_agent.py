@@ -336,10 +336,12 @@ class RobotAgent(Agent):
         force_connect(RobotAgent.robot_receiver_id)
 
     @staticmethod
-    def establish_joystick_handshake(p: DotMap) -> None:
+    def establish_joystick_handshake(p: DotMap, suffix: Optional[str] = '') -> None:
         if p.episode_params.without_robot:
             # lite-mode episode does not include a robot or joystick
             return
+        RobotAgent.robot_receiver_id = create_robot_params().recv_ID + suffix
+        RobotAgent.robot_sender_id = create_robot_params().send_ID + suffix
         socks = establish_handshake(
             p, RobotAgent.robot_sender_id, RobotAgent.robot_receiver_id
         )
