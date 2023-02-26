@@ -52,7 +52,7 @@ def plot_scene_images(
         plot_name: ImageType = plots[i]
         if plot_name == ImageType.SCHEMATIC:
             """PLOT TOPVIEW (SCHEMATIC)"""
-            ax.set_title(str(plot_name) + " " + title, fontsize=14)
+            #ax.set_title(str(plot_name) + " " + title, fontsize=14)
             ax.set_aspect("equal")
             sim_state.render(ax, p.render_params)
         elif plot_name == ImageType.RGB or plot_name == ImageType.DEPTH:

@@ -164,6 +164,7 @@ class AgentState:
                     ypos,
                     s * np.cos(theta),
                     s * np.sin(theta),
+                    headwidth = 5,
                     scale=1,
                     scale_units="xy",
                     zorder=1,  # behind the agent body
@@ -424,6 +425,7 @@ class SimState:
             traversible = np.array(traversible)
         ax.set_xlim(0.0, traversible.shape[1] * map_scale)
         ax.set_ylim(0.0, traversible.shape[0] * map_scale)
+        ax.axis('off')
         human_traversible = None
         if "human_traversible" in self.environment and p.draw_human_traversibles:
             assert p.render_3D
@@ -433,7 +435,7 @@ class SimState:
         )
         # plot the map traversible
         ax.imshow(
-            traversible, extent=extent, cmap="gray", vmin=-0.5, vmax=1.5, origin="lower"
+            traversible, extent=extent, cmap="gray", vmin=0, vmax=1.5, origin="lower"
         )
 
         if human_traversible is not None:  # plot human traversible
@@ -530,6 +532,9 @@ class SimState:
                 )
             ),
             loc=p.legend_loc,
+            fontsize=28,
+            bbox_to_anchor=(0, 0.5, 0.5, 0.5),
+            shadow=True,
         )
 
     @staticmethod
