@@ -434,8 +434,10 @@ class SimState:
             np.array([0.0, traversible.shape[1], 0.0, traversible.shape[0]]) * map_scale
         )
         # plot the map traversible
+        traversible_vis = traversible[:,:,None] * np.zeros((1,1,4))
+        traversible_vis[:,:,3] = 1.0
         ax.imshow(
-            traversible, extent=extent, cmap="gray", vmin=0, vmax=1.5, origin="lower"
+            traversible_vis, extent=extent, origin="lower"
         )
 
         if human_traversible is not None:  # plot human traversible
@@ -456,10 +458,10 @@ class SimState:
             )
             # alphas = np.all(np.logical_not(human_traversible))
 
-        for human in self.pedestrians.values():
-            human.render(ax, p.human_render_params)
+        #for human in self.pedestrians.values():
+        #    human.render(ax, p.human_render_params)
 
-        if (False and (
+        if (True and (
             not p.draw_parallel_robots
             or len(p.draw_parallel_robots_params_by_algo) == 0)
         ):
@@ -644,7 +646,7 @@ class SimState:
                 self.render(ax, p)  # render the sim_state of the slowest
             rob = self.get_robot()
             algo_params: DotMap = p.draw_parallel_robots_params_by_algo[algo]
-            #rob.render(ax, algo_params)
+            rob.render(ax, algo_params)
             if False and p.draw_mark_of_shame and sim_t >= rob.last_collision_t:
                 assert p.robot_render_params.collision_mini_dot_mpl_kwargs
                 x, y, _ = np.squeeze(rob.current_config.position_and_heading_nk3())
