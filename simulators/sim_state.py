@@ -138,7 +138,7 @@ class AgentState:
         ax.plot(x, y, **p.body_normal_mpl_kwargs)
 
         # make the agent change colour when collided (only if specified in params)
-        if p.body_collision_mpl_kwargs is not None and (
+        if False and p.body_collision_mpl_kwargs is not None and (
             self.collided or self.collision_cooldown > 0
         ):
             ax.plot(x, y, **p.body_collision_mpl_kwargs)
@@ -457,9 +457,9 @@ class SimState:
         for human in self.pedestrians.values():
             human.render(ax, p.human_render_params)
 
-        if (
+        if (False and (
             not p.draw_parallel_robots
-            or len(p.draw_parallel_robots_params_by_algo) == 0
+            or len(p.draw_parallel_robots_params_by_algo) == 0)
         ):
             for robot in self.robots.values():
                 robot.render(ax, p.robot_render_params)
@@ -488,8 +488,8 @@ class SimState:
                     fontsize=14,
                     verticalalignment="top",
                 )
-        if len(self.robots) > 0 or len(self.pedestrians) > 0:
-            self.draw_legend(ax, p)
+        #if len(self.robots) > 0 or len(self.pedestrians) > 0:
+        #    self.draw_legend(ax, p)
 
     def draw_legend(self, ax: pyplot.Axes, p: DotMap) -> None:
         # ensure no duplicate labels occur
@@ -639,21 +639,22 @@ class SimState:
                 self.render(ax, p)  # render the sim_state of the slowest
             rob = self.get_robot()
             algo_params: DotMap = p.draw_parallel_robots_params_by_algo[algo]
-            rob.render(ax, algo_params)
-            if p.draw_mark_of_shame and sim_t >= rob.last_collision_t:
+            #rob.render(ax, algo_params)
+            if False and p.draw_mark_of_shame and sim_t >= rob.last_collision_t:
                 assert p.robot_render_params.collision_mini_dot_mpl_kwargs
                 x, y, _ = np.squeeze(rob.current_config.position_and_heading_nk3())
                 ax.plot(x, y, **p.robot_render_params.collision_mini_dot_mpl_kwargs)
                 rob_label: str = algo_params["body_normal_mpl_kwargs"]["label"]
                 p.collided_robots.append(rob_label)  # track this robot as "shamed"
-            for pedestrian in self.pedestrians.values():
-                if (
-                    pedestrian.collision_cooldown is not None
-                    and pedestrian.collision_cooldown > 0
-                ):
-                    pedestrian.render(ax, p.human_render_params)
+            if False:
+                for pedestrian in self.pedestrians.values():
+                    if (
+                        pedestrian.collision_cooldown is not None
+                        and pedestrian.collision_cooldown > 0
+                    ):
+                        pedestrian.render(ax, p.human_render_params)
             # draw legend last (after all other agents/robots)
-            self.draw_legend(ax, p)
+            #self.draw_legend(ax, p)
         # reset tracking which robots collided on this frame
         p.collided_robots = []
 
@@ -669,7 +670,7 @@ class SimState:
             return  # bug where the first frame is not exported, just skip
         img_size: float = 10 * p.render_params.img_scale
         fig, ax = pyplot.subplots(1, 1, figsize=(1 * img_size, img_size))
-        ax.set_title("Multi-robot Schematic View. t={:.3f}".format(sim_t), fontsize=14)
+        #ax.set_title("Multi-robot Schematic View. t={:.3f}".format(sim_t), fontsize=14)
         ax.set_aspect("equal")
         # draw the SimStates
         self.draw_variants(env, sim_t, ax, max_algo_times, p.render_params)

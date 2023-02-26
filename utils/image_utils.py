@@ -52,7 +52,7 @@ def plot_scene_images(
         plot_name: ImageType = plots[i]
         if plot_name == ImageType.SCHEMATIC:
             """PLOT TOPVIEW (SCHEMATIC)"""
-            ax.set_title(str(plot_name) + " " + title, fontsize=14)
+            #ax.set_title(str(plot_name) + " " + title, fontsize=14)
             ax.set_aspect("equal")
             sim_state.render(ax, p.render_params)
         elif plot_name == ImageType.RGB or plot_name == ImageType.DEPTH:
@@ -60,7 +60,7 @@ def plot_scene_images(
             assert rgb_image_1mk3 is not None and depth_image_1mk1 is not None
             ax.set_xticks([])
             ax.set_yticks([])
-            ax.set_title(plot_name, fontsize=14)
+            #ax.set_title(plot_name, fontsize=14)
             if plot_name == ImageType.RGB:
                 ax.imshow(rgb_image_1mk3[0].astype(np.uint8))
             else:
@@ -190,7 +190,7 @@ def save_to_gif_with_ffmpeg(
 
         mp4_filename: str = "{}.mp4".format(filename)
         gif_filename: str = "{}.gif".format(filename)
-        all_png_files: str = os.path.join(IMAGES_DIR, "*.jpg")
+        all_png_files: str = os.path.join(IMAGES_DIR, "*.png")
         print("Rendering movie with ffmpeg -> mp4 -> gif")
         ffmpeg_pngs_to_mp4: str = "ffmpeg {ow} {logs} {fps} {inputs} {mp4} {q} {pad} {out}".format(
             ow="-y",  # force overwrite
@@ -299,7 +299,7 @@ def save_to_gif(
     else:
         save_to_gif_with_imageio(filename, IMAGES_DIR, fps)
 
-    files: List[str] = natural_sort(glob.glob(os.path.join(IMAGES_DIR, "*.jpg")))
+    files: List[str] = natural_sort(glob.glob(os.path.join(IMAGES_DIR, "*.png")))
     if clear_old_files:
         for f in files:
             os.remove(f)

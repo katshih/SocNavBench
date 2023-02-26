@@ -337,7 +337,7 @@ class SimulatorHelper(object):
                         sim_t=sim_idx * self.dt,
                         p=self.params,
                         max_algo_times=max(list(self.sim_states.keys())),
-                        filename="{}_obs{:03d}.jpg".format(filename, sim_idx),
+                        filename="{}_obs{:03d}.png".format(filename, sim_idx),
                     )
                 elif sim_idx < len(sim_state_bank):
                     render_socnav(
@@ -345,7 +345,7 @@ class SimulatorHelper(object):
                         renderer=renderer,
                         params=self.params,
                         camera_pos_13=camera_pos_13,
-                        filename="{}_obs{:03d}.jpg".format(filename, sim_idx),
+                        filename="{}_obs{:03d}.png".format(filename, sim_idx),
                     )
                 print(
                     "Rendered frames: {}/{} ({:.2f}%)\r".format(
