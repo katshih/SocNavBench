@@ -26,9 +26,25 @@ def eval_heuristic(res):
 
     return np.prod(costs_vec)**(1/len(costs_vec)), costs_vec
 
+def get_metrics(res):
+    success = int(res['success'])
+    total_collisions = res['total_collisions']
+    path_length = res['path_length']
+    path_rat = res['path_length_ratio']
+    goal_rat = res['goal_traversal_ratio']
+    path_irr = res['path_irregularity']
+    travel_time = res['total_sim_time_taken'] if success else res['sim_time_budget']
+    avg_speed = np.mean(res['robot_speed'])
+    avg_energy = res['robot_motion_energy']
+    avg_accel = np.mean(res['robot_acceleration'])
+    avg_jerk = np.mean(res['robot_jerk'])
+    close_ped = np.exp(-res['closest_pedestrian_distance']*2).sum()
+    time_to_coll = np.exp(-np.array([10 if x < 0 else min(x, 10) for x in res['time_to_collision']])).sum()
+    
+    return [success, total_collisions, path_length, path_rat, goal_rat, path_irr, travel_time,
+            avg_speed, avg_energy, avg_accel, avg_jerk, close_ped, time_to_coll]
 
-
-def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
+def exec_seqs(params,base_name='local',set_s=[],log_file=[],return_metrics=False):
     base_path = 'tests/socnav/{}_social_force'.format(base_name)
     if os.path.exists(base_path):
         shutil.rmtree(base_path)
@@ -53,6 +69,21 @@ def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
     joystick_s.kill()
     sf_exec.kill()
 
+    if(return_metrics == True):
+        all_metrics = []
+        for out_f in sorted(glob.glob(os.path.join(base_path,'*','*.pkl'))):
+            with open(out_f,'rb') as fp:
+                res = pickle.load(fp)
+                
+            folder = out_f.split('/')[-2]
+            res['filename'] = folder
+            res['config_used'] = params
+
+            metrics = get_metrics(res)
+            all_metrics.append(metrics)
+            log_file.append(res)
+        return all_metrics
+
     total_costs_vec = []
     for out_f in sorted(glob.glob(os.path.join(base_path,'*','*.pkl'))):
         with open(out_f,'rb') as fp:
@@ -68,5 +99,7 @@ def exec_seqs(params,base_name='local',set_s=[],log_file=[]):
         
     total_costs = np.prod(total_costs_vec,axis=1)**(1/len(costs_vec))
     total_costs = total_costs.mean()
+
+
 
     return total_costs
